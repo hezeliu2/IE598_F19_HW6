@@ -1,0 +1,48 @@
+import pandas as pd
+df=pd.read_csv("ccdefault.csv")
+df.head()
+
+y = df.iloc[:, -1]
+X = df.iloc[:,1:-2]
+
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+import numpy as np
+tree = DecisionTreeClassifier()
+train_accuracy=[]
+test_accuracy=[]
+for t in [1,2,3,4,5,6,7,8,9,10]:
+    X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.1,random_state=t)
+    tree.fit(X_train, y_train)
+    y_pred_test=tree.predict(X_test)
+    y_pred_train=tree.predict(X_train)
+    accuracy_train_score=accuracy_score(y_train,y_pred_train)
+    accuracy_test_score=accuracy_score(y_test,y_pred_test)
+    train_accuracy.append(accuracy_train_score)
+    test_accuracy.append(accuracy_test_score)
+    
+print('train scores: ',train_accuracy)
+print('mean of train scores:', np.mean(train_accuracy))
+print('std of train scores:', np.std(train_accuracy))
+print('test scores: ',test_accuracy)
+print('mean of test scores:', np.mean(test_accuracy))
+print('std of test scores:', np.std(test_accuracy))
+
+from sklearn.model_selection import cross_val_score
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1)
+cscores = cross_val_score(tree, X_train, y_train, cv=10)
+tree.fit(X_train,y_train)
+y_pred=tree.predict(X_test)
+ouscor=accuracy_score(y_test,y_pred)
+print('cv scores: ',cscores)
+print('mean of cv scores:', np.mean(cscores))
+print('std of cv scores:', np.std(cscores))
+print('out-of-sample score: ', ouscor)
+
+print("The test score seems higher in the cross validation.The train score of validation is lower than the mean of train score in normal train test split. ")
+print("So the cross validation may works better at the unseen data situation. ")
+
+print("My name is Heze Liu")
+print("My NetID is: hezeliu2")
+print("I hereby certify that I have read the University policy on Academic Integrity and that I am not in violation.")
